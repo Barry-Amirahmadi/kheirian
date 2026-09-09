@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { setLenis } from "@/lib/lenis-instance";
 
 // Client components still evaluate on the server during SSR, and ScrollTrigger
 // touches `document` on registration — so guard the register call.
@@ -80,9 +81,11 @@ export default function SmoothScrollProvider({
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
+    setLenis(lenis);
     ScrollTrigger.refresh();
 
     return () => {
+      setLenis(null);
       clearTimeout(settle);
       lenis.off("scroll", onScroll);
       gsap.ticker.remove(raf);

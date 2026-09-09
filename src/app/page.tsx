@@ -9,6 +9,9 @@ import Differentiator from "@/components/sections/Differentiator";
 import ProductGallery from "@/components/sections/ProductGallery";
 import Process from "@/components/sections/Process";
 import Trust from "@/components/sections/Trust";
+import Contact from "@/components/sections/Contact";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 // Registered globally in SmoothScrollProvider; repeating it here is idempotent
 // and removes any dependence on client-module evaluation order.
@@ -87,6 +90,9 @@ export default function Home() {
           transformed ancestor would become its containing block. */}
       <Intro />
 
+      {/* Fixed, so it stays out of the skew wrapper for the same reason. */}
+      <SiteHeader />
+
       {/* The hero sits OUTSIDE the skew wrapper deliberately. It pins, and a
           pinned element inside a transform that changes every frame becomes a
           feedback loop: ScrollTrigger holds it in place by measuring its real
@@ -102,7 +108,10 @@ export default function Home() {
         <ProductGallery />
         <Process />
         <Trust />
+        <Contact />
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

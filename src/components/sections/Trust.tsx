@@ -58,8 +58,8 @@ export default function Trust() {
   return (
     <section
       ref={root}
+      id="why"
       data-section
-      data-no-exit
       className="mx-auto max-w-[1400px] px-6 py-32 md:px-12"
     >
       <div data-section-inner>

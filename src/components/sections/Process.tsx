@@ -55,6 +55,7 @@ export default function Process() {
   return (
     <section
       ref={root}
+      id="process"
       data-section
       className="mx-auto max-w-[1400px] px-6 py-32 md:px-12"
     >

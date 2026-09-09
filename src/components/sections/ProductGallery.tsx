@@ -104,6 +104,7 @@ export default function ProductGallery() {
   return (
     <section
       ref={root}
+      id="works"
       data-section
       className="mx-auto max-w-[1400px] px-6 py-32 md:px-12"
     >
