@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Kheirian Packaging — design tokens
+   Palette echoes the Falat Pistachio carton: near-black board, warm gold
+   linework, kraft interior. The site is dark by design, not by preference,
+   so there is no light-scheme branch.
+   ========================================================================== */
+
+@theme {
+  /* Backgrounds */
+  --color-bg: #0a0a0a;
+  --color-surface: #131110;
+
+  /* Gold accent — the two stops of the warm gradient */
+  --color-gold: #c9a227;
+  --color-gold-light: #e8c766;
+
+  /* Kraft brown, for warmth against the black */
+  --color-kraft: #8b5e3c;
+
+  /* Text */
+  --color-ink: #f5f1ea;
+  --color-muted: #a39b8f;
+
+  /* Hairlines and washes derived from the palette */
+  --color-line: rgba(245, 241, 234, 0.08);
+  --color-gold-line: rgba(201, 162, 39, 0.28);
+
+  /* Type */
+  --font-sans: var(--font-vazirmatn), ui-sans-serif, system-ui, sans-serif;
+
+  /* Display scale — negative tracking tightens the large Persian headings */
+  --text-display: clamp(3rem, 8vw, 9rem);
+  --text-display--line-height: 0.95;
+  --text-display--letter-spacing: -0.035em;
+
+  --text-h1: clamp(2.25rem, 5vw, 4.5rem);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.025em;
+
+  --text-h2: clamp(1.75rem, 3.5vw, 3rem);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.02em;
+
+  --text-lead: clamp(1.05rem, 1.6vw, 1.375rem);
+  --text-lead--line-height: 1.85;
+}
+
+/* --------------------------------------------------------------------------
+   Raw gradient token — kept outside @theme because Tailwind's --color-*
+   namespace only accepts flat colors.
+   -------------------------------------------------------------------------- */
+:root {
+  --gradient-gold: linear-gradient(
+    135deg,
+    var(--color-gold) 0%,
+    var(--color-gold-light) 55%,
+    var(--color-gold) 100%
+  );
+}
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Headings carry the heavy Vazirmatn weights and the tighter tracking */
+  h1,
+  h2,
+  h3 {
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: #0a0a0a;
+  }
+}
+
+@layer utilities {
+  /* Gold gradient painted through the glyphs */
+  .text-gradient-gold {
+    background-image: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+
+  /* 1px gold rule that fades at both ends */
+  .rule-gold {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-gold) 50%,
+      transparent
+    );
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Lenis — inlined rather than imported from the package so the stylesheet
+   path can't drift between releases.
+   -------------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Intro sequence — a ~2.4s word flash that covers the page on first paint.
+
+   The overlay ships in the server-rendered HTML so it is already covering the
+   hero before any JavaScript runs; without that the hero would flash first.
+   Reduced motion is therefore handled here rather than in the effect: CSS
+   removes the overlay before it ever paints, and the component unmounts it on
+   mount for good measure.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay {
+    display: none !important;
+  }
+}
+
+/* Scroll is locked while the intro plays, otherwise the hero's pinned
+   timeline would scrub away behind the overlay. */
+html.intro-active,
+html.intro-active body {
+  overflow: hidden;
+}
+
+/* Soft colour wash behind the words. Blurred and low-opacity so it reads as a
+   glow rather than a shape — the border-radius morph runs in CSS because GSAP
+   does not reliably interpolate the eight-value radius shorthand. */
+.intro-blob {
+  position: absolute;
+  width: 52vmin;
+  height: 52vmin;
+  background: conic-gradient(
+    from 210deg,
+    var(--color-gold) 0deg,
+    #7f8f45 110deg,
+    var(--color-kraft) 210deg,
+    var(--color-gold-light) 320deg,
+    var(--color-gold) 360deg
+  );
+  filter: blur(60px);
+  opacity: 0.4;
+  animation: intro-blob-morph 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes intro-blob-morph {
+  0% {
+    border-radius: 62% 38% 54% 46% / 46% 58% 42% 54%;
+  }
+  33% {
+    border-radius: 38% 62% 40% 60% / 58% 42% 58% 42%;
+  }
+  66% {
+    border-radius: 55% 45% 62% 38% / 40% 60% 40% 60%;
+  }
+  100% {
+    border-radius: 62% 38% 54% 46% / 46% 58% 42% 54%;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Section seams — a flat `bg-surface` block against the page black leaves a
+   hard horizontal line at both edges. Blending the panel into transparency
+   over the first and last 10% turns each seam into a gradual shift instead.
+   -------------------------------------------------------------------------- */
+.section-blend {
+  background-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--color-surface) 10%,
+    var(--color-surface) 90%,
+    transparent 100%
+  );
+}
+
+/* --------------------------------------------------------------------------
+   Custom cursor. The native cursor is only hidden once the component has
+   mounted and confirmed a fine pointer — if the script never runs, the real
+   cursor stays put rather than leaving the page with none at all.
+   -------------------------------------------------------------------------- */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--color-gold);
+  color: #0a0a0a;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  mix-blend-mode: difference;
+}
+
+.cursor-dot__label {
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 800;
+  visibility: hidden;
+  opacity: 0;
+}
+
+@media (pointer: coarse) {
+  .cursor-dot {
+    display: none;
+  }
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none;
+}
+
+/* --------------------------------------------------------------------------
+   Scroll-velocity skew wrapper. skewY shears vertically, so it never widens
+   the document — no horizontal scrollbar — but it does need its own stacking
+   context to composite cleanly.
+   -------------------------------------------------------------------------- */
+[data-scroll-skew] {
+  /* No will-change here on purpose: this wrapper is most of the document, and
+     promoting it permanently pins a full-page-sized texture in GPU memory.
+     GSAP promotes it for the duration of the tween, which is enough. */
+  transform-origin: center center;
+}
