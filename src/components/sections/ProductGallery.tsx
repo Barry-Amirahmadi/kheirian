@@ -28,7 +28,20 @@ export default function ProductGallery() {
   useEffect(() => {
     const mm = gsap.matchMedia(root);
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
+    mm.add(
+      {
+        motionOK: "(prefers-reduced-motion: no-preference)",
+        // Tilt is driven by mousemove, which a touch screen never fires in a
+        // useful way. Gate it on a real pointer so touch gets the parallax
+        // only, rather than thumbnails frozen at whatever angle a tap left.
+        finePointer: "(pointer: fine)",
+      },
+      (context) => {
+        const { motionOK, finePointer } = context.conditions as {
+          motionOK: boolean;
+          finePointer: boolean;
+        };
+        if (!motionOK) return;
       const cleanups: Array<() => void> = [];
 
       gsap.utils.toArray<HTMLElement>("[data-tilt]").forEach((figure) => {
@@ -66,14 +79,16 @@ export default function ProductGallery() {
           });
         };
 
-        figure.addEventListener("mouseenter", onEnter);
-        figure.addEventListener("mousemove", onMove);
-        figure.addEventListener("mouseleave", onLeave);
-        cleanups.push(() => {
-          figure.removeEventListener("mouseenter", onEnter);
-          figure.removeEventListener("mousemove", onMove);
-          figure.removeEventListener("mouseleave", onLeave);
-        });
+        if (finePointer) {
+          figure.addEventListener("mouseenter", onEnter);
+          figure.addEventListener("mousemove", onMove);
+          figure.addEventListener("mouseleave", onLeave);
+          cleanups.push(() => {
+            figure.removeEventListener("mouseenter", onEnter);
+            figure.removeEventListener("mousemove", onMove);
+            figure.removeEventListener("mouseleave", onLeave);
+          });
+        }
 
         // Independent of the tilt — driven by scroll position, not the cursor.
         const image = figure.querySelector<HTMLElement>("[data-parallax]");
@@ -95,8 +110,9 @@ export default function ProductGallery() {
         }
       });
 
-      return () => cleanups.forEach((fn) => fn());
-    });
+        return () => cleanups.forEach((fn) => fn());
+      },
+    );
 
     return () => mm.revert();
   }, []);
@@ -143,7 +159,7 @@ export default function ProductGallery() {
                 <Image
                   data-parallax
                   src={product.imageSrc}
-                  alt={product.title}
+                  alt={product.alt}
                   width={1195}
                   height={896}
                   sizes="(min-width: 768px) 208px, 100vw"

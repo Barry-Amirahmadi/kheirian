@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# خیریان — سایت بسته‌بندی
 
-## Getting Started
+Marketing site for Kheirian packaging. Next.js 15 (App Router), TypeScript,
+Tailwind v4, RTL Persian throughout, with a GSAP + Lenis scroll motion system.
 
-First, run the development server:
+## Running locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open <http://localhost:3000>. First compile takes 10–15s.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build && npm start   # production build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Recording the demo video
 
-## Learn More
+The site is built around scroll, so the recording is most of the pitch.
 
-To learn more about Next.js, take a look at the following resources:
+**Window setup**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Launch Chrome in app mode so there is no address bar, tab strip or bookmarks
+in frame:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --app=http://localhost:3000
+```
 
-## Deploy on Vercel
+**Checklist**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] Dev server running, page hard-reloaded (`Ctrl+Shift+R`) so no stale bundle
+- [ ] Only one dev server running — a second one on another port competes for CPU
+- [ ] Close other heavy apps; screen recorders and Next dev both want CPU
+- [ ] Record at 1080p or higher, 60fps if the recorder supports it
+- [ ] Full screen, no address bar visible (use the `--app=` command above)
+- [ ] Reload right before recording so the intro sequence plays from the start
+- [ ] Let the intro finish (~2.4s) before scrolling
+- [ ] Scroll **slowly and continuously** — the hero pin and the section
+      hand-offs are scroll-scrubbed, so an even pace reads far better than
+      flicks. Fast flicks also push the velocity skew to its limit.
+- [ ] Pause briefly on the hero once the five layers have fully separated
+- [ ] Hover a gallery item so the cursor morphs to «مشاهده» and the tilt shows
+- [ ] Scroll all the way to the contact section
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Still to come
+
+- Real figures for the Trust cards and real contact details — both currently
+  render explicit `[TODO: ...]` placeholders rather than invented values
+- Real copy and photography for the last two gallery items
+- `metadataBase` in `src/app/layout.tsx` must point at the real domain before
+  deploy, or social link previews will not resolve
+
+## Regenerating the exploded-view layers
+
+The hero and process diagrams slice one photograph into five clipped layers.
+If the source render changes, re-run:
+
+```bash
+node scripts/build-exploded-layers.mjs
+```
+
+It re-crops the stack, paints out the source's annotation leader lines, and
+regenerates `src/lib/exploded-layers.ts`.

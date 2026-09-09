@@ -115,6 +115,15 @@ export default function Process() {
                 />
               </div>
             ))}
+
+            {/* The five layers are one photograph clipped five ways, so each
+                copy stays decorative (alt="") and the composite gets a single
+                description here. Real alt on all five would make a screen
+                reader read the same sentence five times over. */}
+            <span className="sr-only">
+              نمای انفجاری کارتن پنج لایه: لایه چاپی بیرونی، لایه مقوا، لایه
+              فلوت، لایه مقوا و لایه داخلی محافظ، از بالا به پایین.
+            </span>
           </div>
         </div>
       </div>

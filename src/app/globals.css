@@ -283,3 +283,21 @@ html.has-custom-cursor * {
   background-color: rgba(10, 10, 10, 0.88);
   border-bottom-color: var(--color-line);
 }
+
+/* --------------------------------------------------------------------------
+   Keyboard focus. The custom cursor hides the native pointer, which must never
+   take the focus ring with it — these rules are deliberately outside any
+   has-custom-cursor guard so they apply in every state.
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Pointer is hidden only for the mouse, never for focus. */
+html.has-custom-cursor a:focus-visible,
+html.has-custom-cursor button:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
