@@ -19,13 +19,28 @@ const WORDS = [
   { text: "پکیج‌ها", tone: "text-gradient-gold" },
 ];
 
-// Seconds. Each word occupies STEP; it is on screen for roughly 460ms of that,
-// leaving a short blank beat before the next one.
-const STEP = 0.52;
-const IN = 0.18;
-const OUT_AT = 0.3;
-const OUT = 0.16;
-const FADE = 0.4;
+/**
+ * Base rhythm, in arbitrary units — only the proportions matter here. Each word
+ * occupies `step`; it is visible for most of that, leaving a short blank beat
+ * before the next one.
+ */
+const BASE = { step: 0.52, in: 0.18, outAt: 0.3, out: 0.16, fade: 0.4 };
+
+/** Total runtime, in seconds. */
+const TARGET_TOTAL = 3.6;
+
+// Every value is scaled by one factor rather than re-picked by hand, so the
+// relative timing between a word's visible span, its fade/scale/blur
+// transitions and the gap to the next word survives the change untouched.
+const BASE_TOTAL =
+  WORDS.length * BASE.step - (BASE.step - BASE.outAt - BASE.out) + BASE.fade;
+const SCALE = TARGET_TOTAL / BASE_TOTAL;
+
+const STEP = BASE.step * SCALE;
+const IN = BASE.in * SCALE;
+const OUT_AT = BASE.outAt * SCALE;
+const OUT = BASE.out * SCALE;
+const FADE = BASE.fade * SCALE;
 
 export default function Intro() {
   // Rendered on the server so the overlay is painted before the hero is.

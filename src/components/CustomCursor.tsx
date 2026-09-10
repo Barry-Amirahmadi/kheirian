@@ -29,8 +29,12 @@ export default function CustomCursor() {
     document.documentElement.classList.add("has-custom-cursor");
     gsap.set(el, { xPercent: -50, yPercent: -50 });
 
-    const xTo = gsap.quickTo(el, "x", { duration: 0.5, ease: "power3" });
-    const yTo = gsap.quickTo(el, "y", { duration: 0.5, ease: "power3" });
+    // Short enough to track the pointer rather than visibly chase it, long
+    // enough to keep a little trailing character. The morph between dot and
+    // label is animated separately below and is unaffected by this value.
+    const FOLLOW = 0.18;
+    const xTo = gsap.quickTo(el, "x", { duration: FOLLOW, ease: "power3" });
+    const yTo = gsap.quickTo(el, "y", { duration: FOLLOW, ease: "power3" });
 
     let shown = false;
     const onMove = (e: MouseEvent) => {
