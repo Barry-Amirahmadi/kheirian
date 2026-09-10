@@ -1,0 +1,21 @@
+# Cloudflare Pages reads this file from the root of the deployed output.
+# Rules are matched top to bottom; the most specific match wins.
+
+# Content-hashed build assets can never change under a given URL.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The hero video is 3.2 MB and is the whole first-load budget. Caching it
+# for a year is what keeps a repeat visit cheap; the filename is bumped by
+# hand if the video is ever re-encoded.
+/videos/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The HTML itself must revalidate, or a redeploy never reaches anyone.
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

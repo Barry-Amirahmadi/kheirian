@@ -16,12 +16,24 @@ const SITE = {
   title: "خیریان | بسته‌بندی",
   description:
     "طراحی و تولید کارتن پنج لایه با چاپ اختصاصی — استحکام، جذب ضربه و محافظت کامل از محصول.",
+
+  // Resolves relative og:image URLs. Getting this wrong means broken link
+  // previews in WhatsApp and Telegram, which is how this link actually
+  // reaches the client, so it falls back to the real host rather than to
+  // localhost. CF_PAGES_URL only exists when Cloudflare runs the build
+  // itself; on a local `wrangler pages deploy` it is absent, which is why
+  // the production default is hardcoded rather than left to the env.
+  // Set NEXT_PUBLIC_SITE_URL once a custom domain is attached.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.CF_PAGES_URL ||
+    (process.env.NODE_ENV === "production"
+      ? "https://kheirian.pages.dev"
+      : "http://localhost:3000"),
 };
 
 export const metadata: Metadata = {
-  // TODO: swap for the real domain at deploy time. Relative og:image URLs are
-  // resolved against this, so social previews break until it is correct.
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(SITE.url),
   title: SITE.title,
   description: SITE.description,
   openGraph: {
@@ -32,9 +44,11 @@ export const metadata: Metadata = {
     description: SITE.description,
     images: [
       {
-        url: "/images/products/exploded-view-hq.jpg",
-        width: 3042,
-        height: 1408,
+        // 1200x630 is what the social clients actually crop to; the 3042px
+        // source was 2 MB and several clients simply refuse to fetch it.
+        url: "/images/og-card.jpg",
+        width: 1200,
+        height: 630,
         alt: "نمای انفجاری کارتن پنج لایه پسته فلات",
       },
     ],
@@ -43,7 +57,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.title,
     description: SITE.description,
-    images: ["/images/products/exploded-view-hq.jpg"],
+    images: ["/images/og-card.jpg"],
   },
 };
 
