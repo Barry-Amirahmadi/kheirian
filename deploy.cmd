@@ -6,6 +6,14 @@ REM from the wrong place and silently uploads nothing.
 setlocal
 
 cd /d "%~dp0"
+
+REM A user-level CLOUDFLARE_API_TOKEN exists on this machine for another
+REM purpose and lacks Pages permissions; wrangler refuses OAuth login while
+REM any token is present. Clearing it here affects only this window --
+REM `setlocal` above keeps the real user variable untouched.
+set "CLOUDFLARE_API_TOKEN="
+set "CLOUDFLARE_ACCOUNT_ID="
+
 echo.
 echo ================================================
 echo   Kheirian packaging site - Cloudflare deploy
