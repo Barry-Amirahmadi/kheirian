@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import HeroDebug from "./HeroDebug";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -52,6 +53,26 @@ export default function ExplodedHero() {
         if (cancelled) return;
         objectUrl = URL.createObjectURL(blob);
         el.src = objectUrl;
+
+        // iOS Safari paints nothing for a video that has never played: the
+        // seek is accepted and currentTime moves, but the element keeps
+        // showing its poster, so the hero looks frozen on frame 0. A muted
+        // play/pause pair forces one decode and unlocks frame rendering.
+        // Muted inline playback needs no user gesture, so this is allowed to
+        // run on load; if a browser refuses anyway, the catch keeps the rest
+        // of the hero working.
+        el.addEventListener(
+          "loadeddata",
+          () => {
+            const unlock = el.play();
+            if (unlock && typeof unlock.then === "function") {
+              unlock.then(() => el.pause()).catch(() => {});
+            } else {
+              el.pause();
+            }
+          },
+          { once: true },
+        );
       })
       .catch(() => {
         // Network or CORS failure: fall back to the plain path. Scrubbing will
@@ -221,6 +242,9 @@ export default function ExplodedHero() {
           </span>
         </div>
       </div>
+
+      {/* Renders only with ?debug=1 in the URL. */}
+      <HeroDebug />
     </section>
   );
 }
