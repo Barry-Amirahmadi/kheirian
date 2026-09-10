@@ -19,12 +19,52 @@ const VIDEO_SRC = "/videos/exploded-view-final.mp4";
  * single-keyframe encode every seek had to decode from frame 0 and scrubbing
  * was unusable, especially in reverse.
  *
+ * The file is fetched and handed to the element as a blob URL rather than
+ * loaded from its own path. A browser refuses to seek a media resource whose
+ * origin does not advertise `Accept-Ranges`, and Cloudflare Pages does not send
+ * it for this file: measured on the deployed site, `buffered` reached 0-10s and
+ * readyState hit 4 while `seekable` stayed [0, 0], so every currentTime write
+ * was silently clamped to 0 and the hero never moved. A blob is local, so it is
+ * always seekable, which makes the scrub independent of the host entirely.
+ *
  * The previous clip-path implementation is kept whole in ExplodedHeroLayers.tsx
  * as a drop-in fallback.
  */
 export default function ExplodedHero() {
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+
+  // Pull the video down ourselves and swap in a blob URL. Kept separate from
+  // the ScrollTrigger effect below so a re-measure never re-downloads 3 MB.
+  useEffect(() => {
+    const el = video.current;
+    if (!el) return;
+
+    let objectUrl: string | null = null;
+    let cancelled = false;
+
+    fetch(VIDEO_SRC)
+      .then((res) => {
+        if (!res.ok) throw new Error(`video ${res.status}`);
+        return res.blob();
+      })
+      .then((blob) => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        el.src = objectUrl;
+      })
+      .catch(() => {
+        // Network or CORS failure: fall back to the plain path. Scrubbing will
+        // not work if the host withholds ranges, but the diagram still renders
+        // rather than the hero collapsing to an empty box.
+        if (!cancelled) el.src = VIDEO_SRC;
+      });
+
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   useEffect(() => {
     const mm = gsap.matchMedia(root);
@@ -56,14 +96,21 @@ export default function ExplodedHero() {
             el.currentTime = el.duration || 0;
           };
           if (el.readyState >= 1) settle();
-          else el.addEventListener("loadedmetadata", settle, { once: true });
+          else el.addEventListener("loadeddata", settle, { once: true });
           return;
         }
 
-        // A seek before metadata lands is silently dropped, so hold the last
-        // requested progress and apply it once the duration is known.
+        // Readiness is seekability, not metadata. readyState and buffered both
+        // report a fully available video on a host that withholds Accept-Ranges,
+        // while seekable stays empty and every write to currentTime is dropped —
+        // so gating on metadata alone reintroduces the silent-no-op bug.
+        const canSeek = () => el.seekable.length > 0 && el.seekable.end(0) > 0;
+
+        // Scroll position while the blob is still downloading is held here and
+        // applied the moment it becomes seekable, so a visitor who scrolls
+        // immediately lands on the right frame instead of a stale one.
         let pending = 0;
-        let ready = el.readyState >= 1;
+        let ready = canSeek();
 
         const seek = (progress: number) => {
           pending = progress;
@@ -73,12 +120,16 @@ export default function ExplodedHero() {
           el.currentTime = Math.min(progress * el.duration, el.duration - 0.02);
         };
 
-        const onMeta = () => {
+        const onLoaded = () => {
+          if (!canSeek()) return;
           ready = true;
           seek(pending);
           ScrollTrigger.refresh();
         };
-        if (!ready) el.addEventListener("loadedmetadata", onMeta);
+        if (!ready) {
+          el.addEventListener("loadeddata", onLoaded);
+          el.addEventListener("canplay", onLoaded);
+        }
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -99,7 +150,8 @@ export default function ExplodedHero() {
         if (hint) tl.to(hint, { autoAlpha: 0, duration: 0.3 }, 0);
 
         return () => {
-          el.removeEventListener("loadedmetadata", onMeta);
+          el.removeEventListener("loadeddata", onLoaded);
+          el.removeEventListener("canplay", onLoaded);
         };
       },
     );
@@ -144,7 +196,14 @@ export default function ExplodedHero() {
         >
           <video
             ref={video}
-            src={VIDEO_SRC}
+            // No src attribute: the effect above assigns a blob URL, and
+            // leaving the plain path here too would download the file twice.
+            // preload is still "auto" because it costs nothing with no src to
+            // load, and "none" made the browser hold metadata only -- seeks
+            // were accepted, fired `seeked`, then snapped back to 0 because no
+            // frames were retained.
+            // The poster is frame 0, so the hero looks finished while it loads.
+            poster="/images/hero-poster.jpg"
             preload="auto"
             muted
             playsInline
