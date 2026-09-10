@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import CustomCursor from "@/components/CustomCursor";
+import { IS_PUBLIC_LAUNCH } from "@/lib/launch";
 
 const vazirmatn = Vazirmatn({
   variable: "--font-vazirmatn",
@@ -34,6 +35,12 @@ const SITE = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
+
+  // Kept out of search results while the page still shows placeholders --
+  // see src/lib/launch.ts for why, and flip the flag there to go public.
+  robots: IS_PUBLIC_LAUNCH
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
   title: SITE.title,
   description: SITE.description,
   openGraph: {
