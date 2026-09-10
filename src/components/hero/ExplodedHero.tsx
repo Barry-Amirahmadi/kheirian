@@ -47,7 +47,6 @@ export default function ExplodedHero() {
         };
 
         const el = video.current;
-        const stage = root.current?.querySelector<HTMLElement>(".hero-stage");
         const hint = root.current?.querySelector<HTMLElement>(".hero-scroll-hint");
         if (!el) return;
 
