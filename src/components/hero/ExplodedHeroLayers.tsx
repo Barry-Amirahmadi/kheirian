@@ -19,6 +19,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { EXPLODED_LAYERS, STACK_IMAGE } from "@/lib/exploded-layers";
+import { asset } from "@/lib/base-path";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -234,7 +235,7 @@ export default function ExplodedHeroLayers() {
                 style={{ clipPath: layer.clipPath, zIndex: layer.z }}
               >
                 <Image
-                  src={STACK_IMAGE.src}
+                  src={asset(STACK_IMAGE.src)}
                   alt=""
                   fill
                   priority

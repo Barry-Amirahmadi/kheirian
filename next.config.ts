@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   // Emit `about/index.html` rather than `about.html` so a static host
   // resolves clean URLs without per-host rewrite rules.
   trailingSlash: true,
+
+  // Empty on a root-served host; "/kheirian" when publishing to a GitHub
+  // Pages project repo, which serves from a subdirectory. See
+  // src/lib/base-path.ts for why raw asset strings need it too.
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
 };
 
 export default nextConfig;

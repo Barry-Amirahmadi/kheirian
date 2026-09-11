@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroDebug from "./HeroDebug";
 import { heroDebugState } from "./heroDebugState";
+import { asset } from "@/lib/base-path";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,7 +16,7 @@ const FRAME_COUNT = 60;
 const FRAME_W = 960;
 const FRAME_H = 540;
 const framePath = (i: number) =>
-  `/images/hero-frames/f_${String(i + 1).padStart(3, "0")}.jpg`;
+  asset(`/images/hero-frames/f_${String(i + 1).padStart(3, "0")}.jpg`);
 
 /**
  * Hero: the carton exploding, scrubbed by scroll.
@@ -211,7 +212,7 @@ export default function ExplodedHero() {
             aria-hidden="true"
             className="absolute inset-0 h-full w-full object-cover"
             style={{
-              backgroundImage: "url(/images/hero-poster.jpg)",
+              backgroundImage: `url(${asset("/images/hero-poster.jpg")})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}

@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import CustomCursor from "@/components/CustomCursor";
 import { IS_PUBLIC_LAUNCH } from "@/lib/launch";
+import { asset } from "@/lib/base-path";
 
 const vazirmatn = Vazirmatn({
   variable: "--font-vazirmatn",
@@ -34,7 +35,12 @@ const SITE = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE.url),
+  // Origin only, deliberately. A relative og:image starting with "/" is
+  // resolved against the origin and ignores any path on the base, while
+  // asset() already supplies the base path -- so leaving a path here produced
+  // ".../kheirian/kheirian/images/og-card.jpg". Stripping it makes the value
+  // correct no matter which form NEXT_PUBLIC_SITE_URL is given in.
+  metadataBase: new URL(new URL(SITE.url).origin),
 
   // Kept out of search results while the page still shows placeholders --
   // see src/lib/launch.ts for why, and flip the flag there to go public.
@@ -53,7 +59,7 @@ export const metadata: Metadata = {
       {
         // 1200x630 is what the social clients actually crop to; the 3042px
         // source was 2 MB and several clients simply refuse to fetch it.
-        url: "/images/og-card.jpg",
+        url: asset("/images/og-card.jpg"),
         width: 1200,
         height: 630,
         alt: "نمای انفجاری کارتن پنج لایه پسته فلات",
@@ -64,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.title,
     description: SITE.description,
-    images: ["/images/og-card.jpg"],
+    images: [asset("/images/og-card.jpg")],
   },
 };
 

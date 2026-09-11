@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PRODUCTS } from "@/data/products";
+import { asset } from "@/lib/base-path";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -158,7 +159,7 @@ export default function ProductGallery() {
               >
                 <Image
                   data-parallax
-                  src={product.imageSrc}
+                  src={asset(product.imageSrc)}
                   alt={product.alt}
                   width={1195}
                   height={896}
