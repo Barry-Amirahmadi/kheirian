@@ -36,7 +36,7 @@ export default function Contact() {
         <dl className="mt-16 grid gap-x-10 gap-y-8 sm:grid-cols-2">
           {FIELDS.map((field) => (
             <div key={field.label} data-reveal className="border-t border-line pt-4">
-              <dt className="text-sm font-medium tracking-[0.2em] text-gold">
+              <dt className="text-sm font-medium [word-spacing:0.35em] text-gold">
                 {field.label}
               </dt>
               <dd className="mt-2 text-base text-muted">{field.value}</dd>

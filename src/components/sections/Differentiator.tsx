@@ -11,7 +11,7 @@ export default function Differentiator() {
       <div data-section-inner>
         <p
           data-reveal
-          className="mb-10 text-sm font-medium tracking-[0.35em] text-gold"
+          className="mb-10 text-sm font-medium [word-spacing:0.6em] text-gold"
         >
           چاپ اختصاصی
         </p>

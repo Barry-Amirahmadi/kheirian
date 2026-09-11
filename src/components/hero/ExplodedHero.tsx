@@ -177,7 +177,7 @@ export default function ExplodedHero() {
     >
       <div className="mx-auto grid w-full max-w-[1400px] items-center gap-12 px-6 md:px-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12">
         <div>
-          <p className="mb-6 text-sm font-medium tracking-[0.35em] text-gold">
+          <p className="mb-6 text-sm font-medium [word-spacing:0.6em] text-gold">
             کیهان نما ایلیا · بسته‌بندی
           </p>
 
