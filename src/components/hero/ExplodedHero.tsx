@@ -235,7 +235,9 @@ export default function ExplodedHero() {
             <span className="inline-block h-8 w-5 rounded-full border border-gold-line">
               <span className="mx-auto mt-1.5 block h-1.5 w-1 rounded-full bg-gold" />
             </span>
-            اسکرول کنید تا لایه‌ها باز شوند
+            {/* Only the words shimmer. The clip would otherwise take in the
+                mouse glyph beside them, which is a border and a dot, not text. */}
+            <span data-shimmer>اسکرول کنید تا لایه‌ها باز شوند</span>
           </p>
         </div>
 

@@ -3,6 +3,7 @@ import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import CustomCursor from "@/components/CustomCursor";
+import ShimmerText from "@/components/ShimmerText";
 import { IS_PUBLIC_LAUNCH } from "@/lib/launch";
 import { asset } from "@/lib/base-path";
 
@@ -86,6 +87,7 @@ export default function RootLayout({
           {/* Sits outside the page's skew wrapper: position:fixed elements must
               not have a transformed ancestor. */}
           <CustomCursor />
+        <ShimmerText />
           {children}
         </SmoothScrollProvider>
       </body>

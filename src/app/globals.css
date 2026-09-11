@@ -91,6 +91,54 @@
 
 @layer utilities {
   /* Gold gradient painted through the glyphs */
+  /* A gold band that travels through the text, right to left, the way the
+     line is read. Measured from the reference clip: one pass every 2.4s.
+
+     Opt in with `data-shimmer`. Single-line text only — the gradient runs
+     horizontally across the whole element, so a wrapped paragraph gets one
+     slice of the band per line and the effect reads as a mistake.
+
+     Two things this shares with .text-gradient-gold, for the same reasons:
+     background-clip paints only inside the padding box, so any element using
+     this needs padding under the baseline or Persian descenders lose their
+     paint entirely; and `color: transparent` means the text is invisible if
+     the background fails to paint, so it is never used for anything that must
+     be legible before CSS loads. */
+  [data-shimmer] {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-muted) 0%,
+      var(--color-muted) 35%,
+      var(--color-gold-light) 50%,
+      var(--color-muted) 65%,
+      var(--color-muted) 100%
+    );
+    background-size: 300% 100%;
+    background-position: 0% 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-bottom: 0.3em;
+    margin-bottom: -0.3em;
+  }
+
+  /* Runs only while on screen. A perpetual animation repainting text on every
+     frame is exactly the kind of background cost this page cannot carry next
+     to a scroll-driven canvas — the class is added by an IntersectionObserver. */
+  [data-shimmer].is-shimmering {
+    animation: text-shimmer 2.4s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-shimmer] {
+      background-image: none;
+      color: var(--color-muted);
+    }
+    [data-shimmer].is-shimmering {
+      animation: none;
+    }
+  }
+
   .text-gradient-gold {
     background-image: var(--gradient-gold);
     -webkit-background-clip: text;
@@ -300,4 +348,13 @@ html.has-custom-cursor a:focus-visible,
 html.has-custom-cursor button:focus-visible {
   outline: 2px solid var(--color-gold);
   outline-offset: 3px;
+}
+
+@keyframes text-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
 }

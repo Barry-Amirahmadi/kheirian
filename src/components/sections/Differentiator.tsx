@@ -9,9 +9,13 @@ export default function Differentiator() {
   return (
     <section data-section className="mx-auto max-w-[1400px] px-6 py-40 md:px-12">
       <div data-section-inner>
+        {/* text-gold is dropped on purpose: data-shimmer sets color:transparent
+            and paints through background-clip, so a colour utility alongside it
+            is a coin toss decided by stylesheet order. */}
         <p
           data-reveal
-          className="mb-10 text-sm font-medium [word-spacing:0.6em] text-gold"
+          data-shimmer
+          className="mb-10 text-sm font-medium [word-spacing:0.6em]"
         >
           چاپ اختصاصی
         </p>
