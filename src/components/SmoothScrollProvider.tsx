@@ -10,6 +10,19 @@ import { setLenis } from "@/lib/lenis-instance";
 // touches `document` on registration — so guard the register call.
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
+
+  // iOS grows and collapses its address bar as you change scroll direction,
+  // which changes window.innerHeight and fires `resize`. ScrollTrigger answers
+  // a resize by recomputing every start and end, and mid-scrub that lands as a
+  // jump — measured on an iPhone in an in-app browser at up to 54px in a single
+  // frame, with 44 direction reversals over 12 seconds of ordinary scrolling.
+  // This tells ScrollTrigger to ignore a mobile resize that only changed the
+  // height, which is exactly the address-bar case and nothing else.
+  //
+  // The layout itself is already immune: the only viewport-height units here
+  // are `min-h-svh`, and `svh` is measured with the bar expanded, so nothing
+  // reflows when it collapses.
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 // Lenis reports velocity in roughly pixels-per-frame. At a normal wheel pace
