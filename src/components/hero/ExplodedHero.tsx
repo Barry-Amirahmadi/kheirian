@@ -218,7 +218,8 @@ export default function ExplodedHero() {
               but only its default inline display reliably breaks the line. */}
           <h1
             ref={heading}
-            className="text-display max-lg:text-[2.75rem]/[0.95] font-black text-gradient-gold pb-[0.45em] -mb-[0.45em]"
+            data-shimmer="gold"
+            className="text-display max-lg:text-[2.75rem]/[0.95] font-black"
           >
             پنج لایه{" "}
             <br className="hidden lg:inline" />

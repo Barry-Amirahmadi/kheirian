@@ -64,7 +64,7 @@ export default function Trust() {
     >
       <div data-section-inner>
         <div data-skew-level className="rule-gold mb-16" />
-        <h2 data-reveal className="text-h2 font-extrabold">
+        <h2 data-reveal data-shimmer="gold" className="text-h2 font-extrabold">
           چرا کیهان نما ایلیا
         </h2>
 

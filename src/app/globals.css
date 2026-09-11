@@ -19,6 +19,11 @@
   /* Kraft brown, for warmth against the black */
   --color-kraft: #8b5e3c;
 
+  /* The one cool note in a warm palette: the light that travels through the
+     gold headings. Named for the brand — کیهان is the cosmos. Change it here
+     and every shimmering heading follows. */
+  --color-cosmic: #5aa9ff;
+
   /* Text */
   --color-ink: #f5f1ea;
   --color-muted: #a39b8f;
@@ -104,7 +109,7 @@
      paint entirely; and `color: transparent` means the text is invisible if
      the background fails to paint, so it is never used for anything that must
      be legible before CSS loads. */
-  [data-shimmer] {
+  [data-shimmer]:not([data-shimmer="gold"]) {
     background-image: linear-gradient(
       90deg,
       var(--color-muted) 0%,
@@ -115,17 +120,61 @@
     );
     background-size: 300% 100%;
     background-position: 0% 0;
+    padding-bottom: 0.3em;
+    margin-bottom: -0.3em;
+  }
+
+  /* Shared by both variants. */
+  [data-shimmer] {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    padding-bottom: 0.3em;
-    margin-bottom: -0.3em;
+  }
+
+  /* Gold variant: the type keeps the full luxe gold gradient and a cosmic
+     blue band travels through it. Two background layers rather than one —
+     the gold stays still while only the band's position animates, which a
+     single gradient cannot do because the whole image would translate.
+
+     The band fades through rgba of the same blue rather than `transparent`:
+     interpolating to the keyword passes through transparent black in some
+     engines and leaves a dirty halo across the gold. */
+  [data-shimmer="gold"] {
+    background-image:
+      linear-gradient(
+        90deg,
+        rgb(90 169 255 / 0) 38%,
+        rgb(90 169 255 / 1) 50%,
+        rgb(90 169 255 / 0) 62%
+      ),
+      var(--gradient-gold);
+    background-size:
+      300% 100%,
+      100% 100%;
+    background-position:
+      100% 0,
+      0 0;
+    padding-bottom: 0.45em;
+    margin-bottom: -0.45em;
+  }
+
+  [data-shimmer="gold"].is-shimmering {
+    animation: text-shimmer-gold 2.4s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-shimmer="gold"] {
+      background-image: var(--gradient-gold);
+    }
   }
 
   /* Runs only while on screen. A perpetual animation repainting text on every
      frame is exactly the kind of background cost this page cannot carry next
      to a scroll-driven canvas — the class is added by an IntersectionObserver. */
-  [data-shimmer].is-shimmering {
+  /* :not() rather than relying on source order — this rule and the gold one
+     have identical specificity, so whichever came last would silently win and
+     drag the gold layer along with the band. */
+  [data-shimmer]:not([data-shimmer="gold"]).is-shimmering {
     animation: text-shimmer 2.4s linear infinite;
   }
 
@@ -356,5 +405,19 @@ html.has-custom-cursor button:focus-visible {
   }
   to {
     background-position: -100% 0;
+  }
+}
+
+/* Only the band's layer moves; the gold layer is pinned at 0 0. */
+@keyframes text-shimmer-gold {
+  from {
+    background-position:
+      100% 0,
+      0 0;
+  }
+  to {
+    background-position:
+      -100% 0,
+      0 0;
   }
 }

@@ -65,7 +65,7 @@ export default function Process() {
 
         <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
           <div>
-            <h2 data-reveal className="text-h2 font-extrabold">
+            <h2 data-reveal data-shimmer="gold" className="text-h2 font-extrabold">
               ساختار پنج لایه
             </h2>
 
