@@ -16,18 +16,30 @@ echo ================================================
 echo.
 
 REM --- 1. Where does this push to? ----------------------------------------
-for /f "delims=" %%r in ('git remote get-url origin 2^>nul') do set "ORIGIN=%%r"
-if not defined ORIGIN (
-    echo   ERROR: no `origin` remote is set on this repository.
+REM Prefers a dedicated `pages` remote so the readable source can live in a
+REM private repo while only the built output -- the same minified bundle every
+REM visitor already downloads -- goes to the public one Pages serves from.
+REM Falls back to `origin` for a single-repo setup.
+for /f "delims=" %%r in ('git remote get-url pages 2^>nul') do set "TARGET=%%r"
+if not defined TARGET (
+    for /f "delims=" %%r in ('git remote get-url origin 2^>nul') do set "TARGET=%%r"
+    if defined TARGET echo   note: no `pages` remote found, falling back to `origin`.
+)
+if not defined TARGET (
+    echo   ERROR: no `pages` or `origin` remote is set.
     echo.
-    echo   Create an empty PUBLIC repo named "kheirian" on GitHub, then run:
-    echo       git remote add origin https://github.com/^<your-user^>/kheirian.git
-    echo       git push -u origin main
+    echo   Recommended two-repo setup, both free:
+    echo     1. PRIVATE repo for the source - your backup:
+    echo          git remote add origin https://github.com/^<user^>/kheirian-packaging-site.git
+    echo          git push -u origin main
+    echo     2. PUBLIC repo for the built output - what Pages serves:
+    echo          git remote add pages https://github.com/^<user^>/kheirian.git
     echo.
-    echo   GitHub Pages needs the repo to be public on a free plan.
+    echo   GitHub Pages needs a public repo on the free plan, but only the
+    echo   build output has to go there.
     goto done
 )
-echo [1/3] Publishing to: %ORIGIN%
+echo [1/3] Publishing to: %TARGET%
 
 REM --- 2. Build with the subdirectory config ------------------------------
 echo.
@@ -62,7 +74,7 @@ git init -q
 git checkout -q -b gh-pages
 git add -A
 git -c user.name="Barry" -c user.email="hesam.nadi8213@yahoo.com" commit -q -m "Publish site"
-git push -q --force "%ORIGIN%" gh-pages
+git push -q --force "%TARGET%" gh-pages
 set "PUSHED=%errorlevel%"
 popd
 rmdir /s /q ".ghpages"
