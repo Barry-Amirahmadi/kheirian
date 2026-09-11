@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroDebug from "./HeroDebug";
 import { heroDebugState } from "./heroDebugState";
 import { asset } from "@/lib/base-path";
+import { INTRO_DONE } from "@/components/sections/Intro";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -45,6 +46,31 @@ const framePath = (i: number) =>
 export default function ExplodedHero() {
   const root = useRef<HTMLElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
+  const heading = useRef<HTMLHeadingElement>(null);
+
+  // The headline sweeps in with the same clip-path wipe the sections use, but
+  // triggered by the intro finishing rather than by scrolling — it is already
+  // on screen, so a scroll trigger would never fire for it.
+  useEffect(() => {
+    const el = heading.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const play = () =>
+      gsap.fromTo(
+        el,
+        { clipPath: "inset(0 0 100% 0)" },
+        { clipPath: "inset(0 0 0% 0)", duration: 1.25, ease: "expo.out" },
+      );
+
+    // If the intro already finished before this mounted, play straight away.
+    if (!document.documentElement.classList.contains("intro-active")) {
+      const t = window.setTimeout(play, 80);
+      return () => window.clearTimeout(t);
+    }
+    window.addEventListener(INTRO_DONE, play, { once: true });
+    return () => window.removeEventListener(INTRO_DONE, play);
+  }, []);
 
   useEffect(() => {
     const cv = canvas.current;
@@ -181,9 +207,21 @@ export default function ExplodedHero() {
             کیهان نما ایلیا · بسته‌بندی
           </p>
 
-          <h1 className="text-display font-black text-gradient-gold pb-[0.45em] -mb-[0.45em]">
-            پنج لایه،
-            <br />
+          {/* One line on phones. At the display scale's 48px floor the line
+              renders 336px wide against 327px available — 9px over — so below
+              lg it steps down to 44px, which measures 308px and leaves room for
+              iOS shaping the glyphs slightly wider. A canvas measureText
+              estimate said 263px and was simply wrong: it does not reproduce
+              Persian joining, so the real width has to come from layout.
+              The break returns at lg, where two lines read stronger.
+              `lg:inline` rather than `lg:block`: display:none suppresses a <br>,
+              but only its default inline display reliably breaks the line. */}
+          <h1
+            ref={heading}
+            className="text-display max-lg:text-[2.75rem]/[0.95] font-black text-gradient-gold pb-[0.45em] -mb-[0.45em]"
+          >
+            پنج لایه{" "}
+            <br className="hidden lg:inline" />
             یک جعبه
           </h1>
 

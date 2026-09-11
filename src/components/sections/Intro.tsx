@@ -27,6 +27,8 @@ const WORDS = [
 const BASE = { step: 0.52, in: 0.18, outAt: 0.3, out: 0.16, fade: 0.4 };
 
 /** Total runtime, in seconds. */
+export const INTRO_DONE = "intro:done";
+
 const TARGET_TOTAL = 3.6;
 
 // Every value is scaled by one factor rather than re-picked by hand, so the
@@ -50,6 +52,7 @@ export default function Intro() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setVisible(false);
+      window.dispatchEvent(new Event(INTRO_DONE));
       return;
     }
 
@@ -67,6 +70,9 @@ export default function Intro() {
         onComplete: () => {
           document.documentElement.classList.remove("intro-active");
           setVisible(false);
+          // The hero waits for this before sweeping its headline in, rather
+          // than duplicating the intro's duration as a magic delay.
+          window.dispatchEvent(new Event(INTRO_DONE));
           // The hero's pin was measured while the page could not scroll.
           ScrollTrigger.refresh();
         },
