@@ -7,10 +7,10 @@
  * blanks instead, in the same shape as the Trust figures.
  */
 const FIELDS = [
-  { label: "تلفن", value: "[TODO: خیریان باید شماره تماس را بدهد]" },
-  { label: "ایمیل", value: "[TODO: خیریان باید ایمیل را بدهد]" },
-  { label: "اینستاگرام", value: "[TODO: خیریان باید نشانی صفحه را بدهد]" },
-  { label: "نشانی کارخانه", value: "[TODO: خیریان باید نشانی را بدهد]" },
+  { label: "تلفن", value: "[TODO: کیهان نما ایلیا باید شماره تماس را بدهد]" },
+  { label: "ایمیل", value: "[TODO: کیهان نما ایلیا باید ایمیل را بدهد]" },
+  { label: "اینستاگرام", value: "[TODO: کیهان نما ایلیا باید نشانی صفحه را بدهد]" },
+  { label: "نشانی کارخانه", value: "[TODO: کیهان نما ایلیا باید نشانی را بدهد]" },
 ];
 
 export default function Contact() {

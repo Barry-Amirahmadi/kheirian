@@ -141,10 +141,12 @@ export default function ExplodedHero() {
             trigger: root.current,
             start: "top top",
             // Desktop pins for 170% of the viewport. Mobile cannot pin — the
-            // stacked hero is taller than the screen — so it scrubs over one
-            // full viewport of travel instead. Triggering on the short 16:9
-            // stage there raced the whole sequence past in ~560px of scroll.
-            end: isDesktop ? "+=170%" : "+=100%",
+            // stacked hero is taller than the screen — so it scrubs over a
+            // stretch of travel instead. Half a viewport, not a full one:
+            // measured on Barry's iPhone the sequence needed ~760px of scroll
+            // to finish, which is more thumb than the animation is worth and
+            // left the stage drifting out of frame before it completed.
+            end: isDesktop ? "+=170%" : "+=50%",
             scrub: 0.9,
             pin: isDesktop,
             onUpdate: (self) => {
@@ -176,7 +178,7 @@ export default function ExplodedHero() {
       <div className="mx-auto grid w-full max-w-[1400px] items-center gap-12 px-6 md:px-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12">
         <div>
           <p className="mb-6 text-sm font-medium tracking-[0.35em] text-gold">
-            خیریان · بسته‌بندی
+            کیهان نما ایلیا · بسته‌بندی
           </p>
 
           <h1 className="text-display font-black text-gradient-gold pb-[0.45em] -mb-[0.45em]">

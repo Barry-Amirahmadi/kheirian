@@ -8,7 +8,7 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const TODO = "[TODO: خیریان باید این عدد را بدهد]";
+const TODO = "[TODO: کیهان نما ایلیا باید این عدد را بدهد]";
 
 type Stat = {
   id: string;
@@ -65,7 +65,7 @@ export default function Trust() {
       <div data-section-inner>
         <div data-skew-level className="rule-gold mb-16" />
         <h2 data-reveal className="text-h2 font-extrabold">
-          چرا خیریان
+          چرا کیهان نما ایلیا
         </h2>
 
         <dl className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

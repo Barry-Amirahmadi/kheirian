@@ -20,7 +20,7 @@ export default function Differentiator() {
           data-reveal
           className="max-w-[18ch] text-h1 font-black leading-[1.15]"
         >
-          هر جعبه‌ای که از خیریان بیرون می‌آید، روی خط چاپ اختصاصی خودِ برند شما
+          هر کارتن که از کیهان نما ایلیا بیرون می‌آید، روی خط چاپ اختصاصی خودِ برند شما
           بسته می‌شود — نه یک قالب آماده.
         </h2>
       </div>

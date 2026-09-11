@@ -159,7 +159,7 @@ export default function ExplodedHeroLayers() {
         {/* ------------------------------------------------------------ copy */}
         <div>
           <p className="mb-6 text-sm font-medium tracking-[0.35em] text-gold">
-            خیریان · بسته‌بندی
+            کیهان نما ایلیا · بسته‌بندی
           </p>
 
           <h1

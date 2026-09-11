@@ -7,7 +7,7 @@ export default function SiteFooter() {
   return (
     <footer className="border-t border-line">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-4 px-6 py-12 md:flex-row md:items-center md:justify-between md:px-12">
-        <p className="text-lg font-black">خیریان</p>
+        <p className="text-lg font-black">کیهان نما</p>
         <p className="text-sm text-muted">
           طراحی و تولید جعبه‌های بسته‌بندی
         </p>
