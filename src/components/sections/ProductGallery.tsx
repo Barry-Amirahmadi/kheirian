@@ -138,24 +138,35 @@ export default function ProductGallery() {
               data-reveal
               data-cursor-label="مشاهده"
               style={{ perspective: "900px" }}
-              className="grid grid-cols-[auto_1fr] items-center gap-6 border-t border-line py-7 md:grid-cols-[auto_1fr_auto] md:gap-10"
+              // Four columns from md, not three. With `auto 1fr auto` the text
+              // column measured 1006px of a 1400px row while the words hugged
+              // its right edge, so roughly seventy percent of every row was a
+              // hole — it reads as content that failed to load rather than as
+              // white space. Title and description now sit side by side and
+              // the thumbnail is half again as wide, which spends the width
+              // instead of leaving it blank.
+              className="grid grid-cols-[auto_1fr] items-center gap-6 border-t border-line py-7 md:grid-cols-[auto_minmax(0,0.9fr)_minmax(0,1fr)_auto] md:gap-10"
             >
               <span className="text-sm font-medium text-gold">
                 {product.number}
               </span>
 
-              <div>
+              {/* display:contents at md — the wrapper stops generating a box
+                  and its two children become grid items in their own right, so
+                  one markup tree gives a stacked pair on a phone and two
+                  separate columns on a desktop. */}
+              <div className="md:contents">
                 <h3 className="text-2xl font-extrabold md:text-3xl">
                   {product.title}
                 </h3>
-                <p className="mt-2 max-w-md text-sm text-muted">
+                <p className="mt-2 text-sm text-muted md:mt-0">
                   {product.description}
                 </p>
               </div>
 
               <figure
                 data-tilt
-                className="relative col-span-2 h-36 w-full overflow-hidden rounded-xl border border-line md:col-span-1 md:h-28 md:w-52"
+                className="relative col-span-2 h-36 w-full overflow-hidden rounded-xl border border-line md:col-span-1 md:h-32 md:w-72"
               >
                 <Image
                   data-parallax
@@ -163,7 +174,7 @@ export default function ProductGallery() {
                   alt={product.alt}
                   width={1195}
                   height={896}
-                  sizes="(min-width: 768px) 208px, 100vw"
+                  sizes="(min-width: 768px) 288px, 100vw"
                   // Overscaled so the parallax drift never exposes an edge.
                   style={{ top: "-15%", height: "130%" }}
                   className="absolute inset-x-0 w-full object-cover"

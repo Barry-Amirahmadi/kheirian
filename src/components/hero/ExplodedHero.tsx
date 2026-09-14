@@ -201,9 +201,15 @@ export default function ExplodedHero() {
       ref={root}
       className="relative flex min-h-svh items-center overflow-hidden bg-bg py-16 lg:py-0"
     >
-      <div className="mx-auto grid w-full max-w-[1400px] items-center gap-12 px-6 md:px-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12">
-        <div>
-          <p className="mb-6 text-sm font-medium [word-spacing:0.6em] text-gold">
+      {/* Three grid children, not two, so the scroll hint can sit in a
+          different place per breakpoint. Stacked on a phone the old order read
+          text → "اسکرول کنید تا لایه‌ها باز شوند" → image, which invites the
+          visitor to scroll before showing them the thing that will move. Below
+          lg the `order-*` classes put the hint last; at lg explicit row/column
+          placement returns it under the paragraph, where it was. */}
+      <div className="mx-auto grid w-full max-w-[1400px] items-center gap-12 px-6 md:px-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-x-12 lg:gap-y-0">
+        <div className="order-1 lg:col-start-1 lg:row-start-1">
+          <p className="mb-6 text-sm font-medium [word-spacing:0.18em] text-gold">
             کیهان نما ایلیا · بسته‌بندی
           </p>
 
@@ -232,32 +238,30 @@ export default function ExplodedHero() {
             رسیدن به دست مشتری.
           </p>
 
-          <p className="hero-scroll-hint mt-10 flex items-center gap-3 text-sm text-muted">
-            <span className="inline-block h-8 w-5 rounded-full border border-gold-line">
-              <span className="mx-auto mt-1.5 block h-1.5 w-1 rounded-full bg-gold" />
-            </span>
-            {/* Only the words shimmer. The clip would otherwise take in the
-                mouse glyph beside them, which is a border and a dot, not text. */}
-            <span data-shimmer>اسکرول کنید تا لایه‌ها باز شوند</span>
-          </p>
         </div>
 
+        {/* No border, no rounding, no shadow. Those framed a photograph; with
+            the sweep keyed out there is no photograph left to frame, only the
+            carton, and a hairline box drawn around a transparent-looking area
+            reads as an empty container. The carton now floats on the page's own
+            ground, which is what the keying was for. */}
         <div
-          className="hero-stage relative w-full overflow-hidden rounded-[1.75rem] border border-gold-line shadow-2xl shadow-black/60"
-          style={{ aspectRatio: "16 / 9", willChange: "transform" }}
+          className="hero-stage relative order-2 mx-auto w-full max-w-[34rem] lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:max-w-none"
+          style={{ aspectRatio: `${FRAME_W} / ${FRAME_H}`, willChange: "transform" }}
         >
-          {/* Frame 1 as a CSS background, so the stage is never an empty box
-              between first paint and the first frame decoding. */}
+          {/* Frame 1 as a CSS background, so the stage is never blank between
+              first paint and the first frame decoding. */}
           <canvas
             ref={canvas}
             width={FRAME_W}
             height={FRAME_H}
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-contain"
             style={{
               backgroundImage: `url(${asset("/images/hero-poster.jpg")})`,
-              backgroundSize: "cover",
+              backgroundSize: "contain",
               backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
             }}
           />
 
@@ -269,6 +273,15 @@ export default function ExplodedHero() {
             لایه فلوت، لایه مقوا و لایه داخلی محافظ، همراه با ضخامت هر لایه.
           </span>
         </div>
+
+        <p className="hero-scroll-hint order-3 flex items-center gap-3 text-sm text-muted lg:col-start-1 lg:row-start-2 lg:mt-10">
+          <span className="inline-block h-8 w-5 rounded-full border border-gold-line">
+            <span className="mx-auto mt-1.5 block h-1.5 w-1 rounded-full bg-gold" />
+          </span>
+          {/* Only the words shimmer. The clip would otherwise take in the
+              mouse glyph beside them, which is a border and a dot, not text. */}
+          <span data-shimmer>اسکرول کنید تا لایه‌ها باز شوند</span>
+        </p>
       </div>
 
       {/* Renders only with ?debug=1 in the URL. */}

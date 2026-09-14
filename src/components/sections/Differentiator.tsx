@@ -15,7 +15,7 @@ export default function Differentiator() {
         <p
           data-reveal
           data-shimmer
-          className="mb-10 text-sm font-medium [word-spacing:0.6em]"
+          className="mb-10 text-sm font-medium [word-spacing:0.18em]"
         >
           چاپ اختصاصی
         </p>

@@ -391,8 +391,14 @@ html.has-custom-cursor * {
   border-bottom: 1px solid transparent;
 }
 
+/* Fully opaque, not a wash. At rgba(…, 0.88) twelve percent of the page came
+   through the bar, which is invisible over the dark stretches and completely
+   illegible where a bright product photo or a gold heading passes underneath —
+   the nav links and the page text overlapped into a jumble. A backdrop-filter
+   would fix it too, but a full-width blur repainting every scroll frame is the
+   cost this page was built to avoid, and an opaque bar costs nothing. */
 .site-header.is-scrolled {
-  background-color: rgba(10, 10, 10, 0.88);
+  background-color: var(--color-bg);
   border-bottom-color: var(--color-line);
 }
 

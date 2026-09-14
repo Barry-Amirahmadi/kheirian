@@ -1,18 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { scrollToSection } from "@/lib/lenis-instance";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 const LINKS = [
   { href: "#works", label: "نمونه کارها" },
   { href: "#process", label: "ساختار" },
-  { href: "#why", label: "چرا کیهان نما ایلیا" },
+  // "چرا ما", not the full brand name: the logo two inches to the right now
+  // spells out "کیهان نما ایلیا", and repeating it in the very next element
+  // reads as a mistake. The section's own heading still carries the long form.
+  { href: "#why", label: "چرا ما" },
 ];
 
 /**
@@ -39,12 +36,26 @@ export default function SiteHeader() {
     const el = root.current;
     if (!el) return;
 
-    const trigger = ScrollTrigger.create({
-      start: 120,
-      onToggle: (self) => el.classList.toggle("is-scrolled", self.isActive),
-    });
+    // A plain scroll listener, deliberately not a ScrollTrigger.
+    //
+    // This used to be `ScrollTrigger.create({ start: 120, onToggle })`, and it
+    // stopped being active partway down the page: measured is-scrolled true at
+    // scrollY 2400 but false at 5400 and 6400, so the bar went transparent
+    // again over the whole lower half of the site and the page text ran
+    // straight through the nav links. Giving the trigger an explicit
+    // `end: maxScroll + 200` did not help, and the state was identical whether
+    // the scroll went through Lenis or not, so it is not a stale-update
+    // problem either — the reason inside GSAP was never pinned down.
+    //
+    // It does not need to be: this is one boolean about the scroll position,
+    // Lenis scrolls the window natively so `scrollY` is authoritative, and a
+    // passive listener has none of the refresh and pin-spacer machinery that
+    // made the trigger version fragile.
+    const sync = () => el.classList.toggle("is-scrolled", window.scrollY > 120);
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
 
-    return () => trigger.kill();
+    return () => window.removeEventListener("scroll", sync);
   }, []);
 
   // While the panel is open the page behind it must not scroll, and Escape
@@ -74,16 +85,19 @@ export default function SiteHeader() {
       ref={root}
       className="site-header fixed inset-x-0 top-0 z-50 transition-colors duration-300"
     >
-      <div className="mx-auto flex max-w-[1400px] items-center gap-8 px-6 py-4 md:px-12">
+      {/* gap-4 below md: the full brand name, the contact pill and the toggle
+          measure 364px together at 390px wide, and gap-8 pushed that to 396 —
+          six pixels of overflow. */}
+      <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-6 py-4 md:gap-8 md:px-12">
         <a
           href="#top"
           onClick={(e) => {
             e.preventDefault();
             scrollToSection("body", 0);
           }}
-          className="text-lg font-black tracking-tight text-ink"
+          className="shrink-0 whitespace-nowrap text-base font-black tracking-tight text-ink md:text-lg"
         >
-          کیهان نما
+          کیهان نما ایلیا
         </a>
 
         <nav className="hidden flex-1 items-center gap-8 md:flex">
